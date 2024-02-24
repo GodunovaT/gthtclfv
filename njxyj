@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace Exam_GodunovaTA
+{
+    public partial class Web_GodunovaTA : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+         protected void Load_tabel(object sender, EventArgs e)
+        {
+            Button1.Visible = false;
+            Label1.Visible = false;
+
+            DropDownList1.Visible = true;
+            Label2.Visible = true;
+
+        }
+
+        protected void Smena_autors(object sender, EventArgs e)
+        {
+            string oldSelect = SqlDataSource1.SelectCommand;
+
+            DataView dataView = (DataView)SqlDataSource1.Select(DataSourceSelectArguments.Empty);
+
+            string address = "";
+
+            string phone = "";
+          
+            foreach (DataRowView row in dataView)
+            {
+                if (row["au_lname"].ToString() == DropDownList1.Text)
+                {
+                    address = row["address"].ToString();
+                    phone = row["phone"].ToString();
+                }
+            }
+
+            Label2.Text = string.Format("Address: {0}, Phone: {1}", address, phone);
+
+            SqlDataSource1.SelectCommand = oldSelect;
+        }
+    }
+}
+
+
+
+
+<asp:Button ID="Button1" runat="server" OnClick="Load_tabel" Text="Load" />
+        <asp:Label ID="Label1" runat="server" Text="Press Button to Load Data"></asp:Label>
+        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:PUBSConnectionString %>" ProviderName="<%$ ConnectionStrings:PUBSConnectionString.ProviderName %>" SelectCommand="SELECT [au_lname], [address], [phone] FROM [authors]"> </asp:SqlDataSource>
+        <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource1" DataTextField="au_lname" Visible="False"> OnDataBinding="DataDropDownList_TextChanged" OnDataBound="DataDropDownList_TextChanged" OnSelectedIndexChanged="DataDropDownList_TextChanged" OnTextChanged="DataDropDownList_TextChanged" AutoPostBack="True"</asp:DropDownList>
+        <asp:Label ID="Label2" runat="server" Visible="False"></asp:Label>
